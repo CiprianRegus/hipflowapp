@@ -22,7 +22,7 @@
 #define CMD_15_H_
 
 #include "command.h"
-#include "factory_reset.h"
+// #include "factory_reset.h"
 
 
 class cmd_15 : public cmd_base
@@ -60,7 +60,7 @@ uint8_t cmd_15::insert_Data(uint8_t &ByteCnt, uint8_t *pData)
 	uint8_t wrtPrtCd = 0;
 
 	// #135
-	wrtPrtCd = (uint8_t) writeProtectSet();
+	// wrtPrtCd = (uint8_t) writeProtectSet();
 
 	do // once
 	{

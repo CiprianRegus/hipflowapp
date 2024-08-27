@@ -45,7 +45,7 @@
 template <class T>
 class circular_buffer 
 {
-	std::mutex mutex_;
+	// std::mutex mutex_;
 	std::unique_ptr<T[]> buf_;
 	size_t head_ = 0;
 	size_t tail_ = 0;
@@ -62,7 +62,7 @@ public:
 
 	void put(T item)
 	{
-		std::lock_guard<std::mutex> myLock(mutex_);
+		// std::lock_guard<std::mutex> myLock(mutex_);
 
 		buf_[head_] = item;
 		head_ = (head_ + 1) % size_;
@@ -76,7 +76,7 @@ public:
 
 	T get(void)   // gets the value, removes it from the buffer
 	{
-		std::lock_guard<std::mutex> myLock(mutex_);
+		// std::lock_guard<std::mutex> myLock(mutex_);
 
 		if(is_empty())
 		{
@@ -94,7 +94,7 @@ public:
 
 	void reset(void)
 	{
-		std::lock_guard<std::mutex> myLock(mutex_);
+		// std::lock_guard<std::mutex> myLock(mutex_);
 		head_ = tail_;
 	}
 
@@ -117,7 +117,7 @@ public:
 	}
 	size_t size(void) 
 	{
-		std::lock_guard<std::mutex> myLock(mutex_);
+		// std::lock_guard<std::mutex> myLock(mutex_);
 		return currentSize;
 	}
 

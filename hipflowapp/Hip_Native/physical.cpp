@@ -168,7 +168,10 @@ void* run_data(void * pArgs)
 
 	myArgs.pDieCmd    = &dieThreadDie; // global
 
+	printf("run_data thread start\n");
+
 	r = pthread_create(&IOthread, NULL, &run_io, &myArgs);
+	printf("Creating run_io thread (%d)\n", r);
 	if ( r )// is an error
 	{
 		printf("Failed to create IOthread.\n");
@@ -222,12 +225,15 @@ void* run_data(void * pArgs)
 
 	while( ! (* pMyDie) ) 
 	{
+		k_sleep(K_MSEC(1000));
+		printf("run_data running\n");
+
 		waitCnt = 0;
 		while (*(pargs->upCnt) == lastUpdt)
 		{
 			if ( waitCnt <= MAXWAIT )
 			{
-				delay( 1 );//mS
+				// delay( 1 );//mS
 				waitCnt++;
 			}
 			else // repeat the same data

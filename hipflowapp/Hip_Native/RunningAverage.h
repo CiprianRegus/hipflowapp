@@ -43,7 +43,7 @@
 template <class C, size_t initialSize>
 class running_average 
 {
-	std::mutex mutex_;
+	// std::mutex mutex_;
 	circular_buffer<C> * pRndBuff;
 	C runningTotal = 0;
 
@@ -54,20 +54,20 @@ public:
 		C local = 0L; //force it to be a numeric or have an operator=...optimized out in Release
 	};
 
-	virtual ~running_average() {	std::lock_guard<std::mutex> lock(mutex_); 
+	virtual ~running_average() {	//std::lock_guard<std::mutex> lock(mutex_); 
 									delete pRndBuff;   pRndBuff = NULL;           };
 	// no cctor nor op= ...never do that.
 
 #define DOTHEMATH  ((double)runningTotal/(double)(pRndBuff->size()))
 	// get the value
 	operator double()  {	return getAvg();      };
-	double getAvg(void){ 	std::lock_guard<std::mutex> lock(mutex_);
+	double getAvg(void){ 	//std::lock_guard<std::mutex> lock(mutex_);
 							return DOTHEMATH;      };
 
 	// add one to get a new average
 	double add2Avg( C& newVal )// returns new average
 	{
-		std::lock_guard<std::mutex> lock(mutex_);
+		// std::lock_guard<std::mutex> lock(mutex_);
 		if (pRndBuff->is_full())
 		{
 			C local = pRndBuff->get(); // get the oldest, removed from buffer(no longer full)
@@ -82,7 +82,7 @@ public:
 
 	void resize( size_t newSize ) //resize the length of the running average
 	{
-		std::lock_guard<std::mutex> lock(mutex_);
+		// std::lock_guard<std::mutex> lock(mutex_);
 		C local;
 
 		if (newSize == 0 || newSize == pRndBuff->maxsize() )

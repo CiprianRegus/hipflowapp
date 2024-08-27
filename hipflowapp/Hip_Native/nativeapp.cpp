@@ -176,10 +176,11 @@ int NativeApp::handleMessage(AppPdu *pPDU)
 	}
 	pPDU->printMsg();
 #endif
-	if(pPDU->IsSTX())
-	{  // #36
-		pPDU->setReqByteCount(pPDU->ByteCount());
-	}
+	// if(pPDU->IsSTX())
+	// {  // #36
+	//	This is not even defined anywhere... Good thing that is compiles
+	// 	pPDU->setReqByteCount(pPDU->ByteCount());
+	// }
 	if (pPDU->IsSTX()) pAppConnector->incStx();
 	do
 	{	// see line 174 in burst.cpp for cmd 120 handling info
@@ -389,140 +390,139 @@ errVal_t NativeApp::start_system(void)
 	return ret;
 }
 
+// #include <sys/fcntl.h>
+// #include <sys/errno.h>
+// #include <sys/ioctl.h>
+// #include <sys/socket.h>
+// #include <arpa/inet.h>
+// #include <net/if.h>
 
-#include <sys/fcntl.h>
-#include <sys/errno.h>
-#include <sys/ioctl.h>
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include <net/if.h>
+// #include <netdb.h>
+// #include <ifaddrs.h>
+// #include <linux/if_link.h>
 
-#include <netdb.h>
-#include <ifaddrs.h>
-#include <linux/if_link.h>
+// errVal_t NativeApp::initHostNameDns()
+// {
+// 	errVal_t result = LINUX_ERROR;
+//         // (re-)set hostname
+//         char hostname[65];
+//         char cmd[255];
+// 		const int tagSize = 32;
+//         if (strnlen_s((char*)NONvolatileData.processUnitTag, tagSize)==0)
+//         {
+//                 // just use longtag for hostname
+//                 snprintf(hostname, 65, "%s", NONvolatileData.longTag);
+//         }
+//         else
+//         {
+//                 snprintf(hostname, 65, "%s-%s", NONvolatileData.processUnitTag, NONvolatileData.longTag);
+//         }
 
-errVal_t NativeApp::initHostNameDns()
-{
-	errVal_t result = LINUX_ERROR;
-        // (re-)set hostname
-        char hostname[65];
-        char cmd[255];
-		const int tagSize = 32;
-        if (strnlen_s((char*)NONvolatileData.processUnitTag, tagSize)==0)
-        {
-                // just use longtag for hostname
-                snprintf(hostname, 65, "%s", NONvolatileData.longTag);
-        }
-        else
-        {
-                snprintf(hostname, 65, "%s-%s", NONvolatileData.processUnitTag, NONvolatileData.longTag);
-        }
+//         //printf("hipflowapp setting hostname %s\n", hostname);
 
-        //printf("hipflowapp setting hostname %s\n", hostname);
+//         snprintf(cmd, 255, "hostnamectl set-hostname %s --static", hostname);
 
-        snprintf(cmd, 255, "hostnamectl set-hostname %s --static", hostname);
+//         int status = system(cmd);
+//         if (WIFEXITED(status))
+//         {
+//                 result = NO_ERROR;
+//         }
 
-        int status = system(cmd);
-        if (WIFEXITED(status))
-        {
-                result = NO_ERROR;
-        }
+//         //printf("hipflowapp calling dhclient\n");
 
-        //printf("hipflowapp calling dhclient\n");
+//         // register hostname with DNS server
+//         result = LINUX_ERROR;
+// 	// using posix_spawn here instead of system() so that it will create a child process and not block
+// 	// This is needed so the cmd 22 and cmd 521 responses are not delayed
+// 	pid_t pid;
+// 	extern char **environ;
+// 	char *argv[] = {"sh", "-c", "dhclient", "-r", NULL};
+// 	status = posix_spawn(&pid, "/bin/sh", NULL, NULL, argv, environ);
 
-        // register hostname with DNS server
-        result = LINUX_ERROR;
-	// using posix_spawn here instead of system() so that it will create a child process and not block
-	// This is needed so the cmd 22 and cmd 521 responses are not delayed
-	pid_t pid;
-	extern char **environ;
-	char *argv[] = {"sh", "-c", "dhclient", "-r", NULL};
-	status = posix_spawn(&pid, "/bin/sh", NULL, NULL, argv, environ);
+// 	char *argv2[] = {"sh", "-c", "dhclient", NULL};
+// 	status = posix_spawn(&pid, "/bin/sh", NULL, NULL, argv2, environ);
 
-	char *argv2[] = {"sh", "-c", "dhclient", NULL};
-	status = posix_spawn(&pid, "/bin/sh", NULL, NULL, argv2, environ);
-
-        //printf("hipflowapp finished Updating dns server with hostname %s for eth0\n", hostname);
+//         //printf("hipflowapp finished Updating dns server with hostname %s for eth0\n", hostname);
 
 
-        return result;
-}
+//         return result;
+// }
 
-// this requires at least 3 bytes in the array
-errVal_t NativeApp::getLowMAC(uint8_t *pArr, bool getFullAddress)
-{
-	errVal_t Ret = NO_ERROR;
-	struct ifaddrs *ifaddr, *ifa;
-	int sk, n;
-	char host[NI_MAXHOST];
+// // this requires at least 3 bytes in the array
+// errVal_t NativeApp::getLowMAC(uint8_t *pArr, bool getFullAddress)
+// {
+// 	errVal_t Ret = NO_ERROR;
+// 	struct ifaddrs *ifaddr, *ifa;
+// 	int sk, n;
+// 	char host[NI_MAXHOST];
 
-	if (getifaddrs(&ifaddr) == -1) {
-		perror("getifaddrs");
-		return (LINUX_ERROR);
-	}
+// 	if (getifaddrs(&ifaddr) == -1) {
+// 		perror("getifaddrs");
+// 		return (LINUX_ERROR);
+// 	}
 
-	// Walk through linked list, maintaining head pointer so we
-	//  can free list later 
+// 	// Walk through linked list, maintaining head pointer so we
+// 	//  can free list later 
 
-	for (ifa = ifaddr, n = 0; ifa != NULL; ifa = ifa->ifa_next, n++) {
-		if (ifa->ifa_addr == NULL)
-			continue;
+// 	for (ifa = ifaddr, n = 0; ifa != NULL; ifa = ifa->ifa_next, n++) {
+// 		if (ifa->ifa_addr == NULL)
+// 			continue;
 
-		if (ifa->ifa_addr->sa_family == AF_INET)
-		{
-			struct ifreq ifr;
-			int s;
-			if ((s = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
-				perror("socket");
-				return LINUX_ERROR;
-			}
+// 		if (ifa->ifa_addr->sa_family == AF_INET)
+// 		{
+// 			struct ifreq ifr;
+// 			int s;
+// 			if ((s = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+// 				perror("socket");
+// 				return LINUX_ERROR;
+// 			}
 
-			strcpy_s(ifr.ifr_name, IFNAMSIZ, ifa->ifa_name);
-			if (ioctl(s, SIOCGIFHWADDR, &ifr) < 0) {
-				perror("ioctl");
-				return LINUX_ERROR;
-			}
+// 			strcpy_s(ifr.ifr_name, IFNAMSIZ, ifa->ifa_name);
+// 			if (ioctl(s, SIOCGIFHWADDR, &ifr) < 0) {
+// 				perror("ioctl");
+// 				return LINUX_ERROR;
+// 			}
 
-			unsigned char *hwaddr = (unsigned char *)ifr.ifr_hwaddr.sa_data;
-			if (hwaddr[1] != 0)
-			{
-			//  for debug only
-				printf("\n**| %s :   %02X:%02X:%02X:%02X:%02X:%02X\n", ifa->ifa_name, hwaddr[0], hwaddr[1], hwaddr[2], hwaddr[3], hwaddr[4], hwaddr[5]);
+// 			unsigned char *hwaddr = (unsigned char *)ifr.ifr_hwaddr.sa_data;
+// 			if (hwaddr[1] != 0)
+// 			{
+// 			//  for debug only
+// 				printf("\n**| %s :   %02X:%02X:%02X:%02X:%02X:%02X\n", ifa->ifa_name, hwaddr[0], hwaddr[1], hwaddr[2], hwaddr[3], hwaddr[4], hwaddr[5]);
 
-				if (pArr == NULL)
-				{
-					Ret = PARAM_ERROR;
-				}
-				else
-				{
-				        if (getFullAddress)
-				        {
-				            pArr[0] = hwaddr[0];
-				            pArr[1] = hwaddr[1];
-				            pArr[2] = hwaddr[2];
-				            pArr[3] = hwaddr[3];
-				            pArr[4] = hwaddr[4];
-				            pArr[5] = hwaddr[5];
+// 				if (pArr == NULL)
+// 				{
+// 					Ret = PARAM_ERROR;
+// 				}
+// 				else
+// 				{
+// 				        if (getFullAddress)
+// 				        {
+// 				            pArr[0] = hwaddr[0];
+// 				            pArr[1] = hwaddr[1];
+// 				            pArr[2] = hwaddr[2];
+// 				            pArr[3] = hwaddr[3];
+// 				            pArr[4] = hwaddr[4];
+// 				            pArr[5] = hwaddr[5];
 				            
-				        }
+// 				        }
 				        
-				        else 
-				        {
-					    pArr[0] = hwaddr[3];
-					    pArr[1] = hwaddr[4];
-					    pArr[2] = hwaddr[5];
-				        }
-				        Ret = NO_ERROR;
-				}
+// 				        else 
+// 				        {
+// 					    pArr[0] = hwaddr[3];
+// 					    pArr[1] = hwaddr[4];
+// 					    pArr[2] = hwaddr[5];
+// 				        }
+// 				        Ret = NO_ERROR;
+// 				}
 
-				close(s);
-				break;// out of for loop
-			}
-			close(s);
-		}// all of AF_NET
-	}// next
+// 				close(s);
+// 				break;// out of for loop
+// 			}
+// 			close(s);
+// 		}// all of AF_NET
+// 	}// next
 
-	freeifaddrs(ifaddr);
+// 	freeifaddrs(ifaddr);
 
-	return Ret;
-}
+// 	return Ret;
+// }

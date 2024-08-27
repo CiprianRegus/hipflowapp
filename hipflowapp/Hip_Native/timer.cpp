@@ -49,7 +49,7 @@ uint8_t wdTimerFlag = TRUE;
 static itimerval_t inITimer, saveITimer;
 static uint16_t lastEvent = 0;
 static uint16_t saveEvent = 0;
-static bool_t haltTimer = FALSE;
+static bool haltTimer = FALSE;
 
 #if TIMING_LOG 
 static double tlast = 0;

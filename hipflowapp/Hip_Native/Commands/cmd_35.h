@@ -123,15 +123,15 @@ uint8_t cmd_35::checkNsetValues(void)
 
 	// convert range value units to standard units for comparison and storage
 	float LRV, URV;	// in standard units
-	try {
+	// try {
 		URV = devVar_PV.UnitSet[tempRangeValueUnits].to_Standard(tempUpperRangeValue);
 		LRV = devVar_PV.UnitSet[tempRangeValueUnits].to_Standard(tempLowerRangeValue);
-	}
-	catch (...)
-	{
-		printf(" cmd_35::checkNsetValues cannot convert from PV.Units %d to standard units.\n", tempRangeValueUnits);
-		return RC_INVALID;// don't change anything
-	}
+	// }
+	// catch (...)
+	// {
+	// 	printf(" cmd_35::checkNsetValues cannot convert from PV.Units %d to standard units.\n", tempRangeValueUnits);
+	// 	return RC_INVALID;// don't change anything
+	// }
 
 	// don't compare to each other, just sensor limits
 	if (LRV > USL)//LRV is too big

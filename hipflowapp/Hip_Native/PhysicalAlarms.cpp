@@ -24,7 +24,7 @@
 #include "cDataRaw.h"
 
 
-std::mutex al_mutex;
+// std::mutex al_mutex;
 
 extern bool    configChangedBit_Pri;
 extern bool	configChangedBit_Sec;
@@ -300,7 +300,7 @@ void handle_alarms(double newValue, int index)// index is PV_INDEX or SV_INDEX
 {
 	bool overrange = false;
 	//all the setting and clearing goes on in this routine and its subroutines
-	std::lock_guard<std::mutex> lock(al_mutex); //auto unlock at return
+	// std::lock_guard<std::mutex> lock(al_mutex); //auto unlock at return
 
 	/* clear all for this index, then set as needed */
 	clearAlarm(index);
@@ -357,7 +357,7 @@ void sv_alarm(double newValue)
 
 uint8_t getDeviceStatus(void)
 {
-	std::lock_guard<std::mutex> lock(al_mutex); //auto unlock at return
+	// std::lock_guard<std::mutex> lock(al_mutex); //auto unlock at return
 
 	uint8_t DS = volatileData.deviceStatus;
 
@@ -367,7 +367,7 @@ uint8_t getDeviceStatus(void)
 // returns true on error - always false....
 bool getCmd48Bytes(uint8_t &Byte0, uint8_t &ExDevSt)
 {
-	std::lock_guard<std::mutex> lock(al_mutex); //auto unlock at return
+	// std::lock_guard<std::mutex> lock(al_mutex); //auto unlock at return
 
 	uint8_t DS = volatileData.extended_fld_dev_status & 0x01;// get the lsb only
 	
