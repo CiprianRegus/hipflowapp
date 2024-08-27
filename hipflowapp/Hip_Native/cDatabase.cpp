@@ -32,7 +32,8 @@
 
 #include <mutex>
 
-extern std::mutex al_mutex;
+// extern pthread_mutex_t al_mutex;
+// extern std::mutex al_mutex;
 
 
 /******************  statics ****************************/
@@ -85,13 +86,19 @@ bool Sec_MSA(void) { return !SV_cmd48IsSame; };//bit set if no match
 
 bool match48(bool isPri)
 {
-	std::lock_guard<std::mutex> lock(al_mutex); //auto unlock at return
+	// std::lock_guard<std::mutex> lock(al_mutex); //auto unlock at return
+	bool ret;
+	// pthread_mutex_lock(&al_mutex);
 
 	uint8_t *pMasterData = (isPri)? tempData.Pricmd48TmpData : tempData.Seccmd48TmpData;
 
-	return  (volatileData.cmd48Data[0] == pMasterData[0]) && // Device Specific
+	ret = (volatileData.cmd48Data[0] == pMasterData[0]) && // Device Specific
 		    (volatileData.cmd48Data[6] == pMasterData[6]) && // EFDS
 		    (volatileData.cmd48Data[8] == pMasterData[8]) ;  // Simulation active
+
+	// pthread_mutex_unlock(&al_mutex);
+
+	return ret;
 }
 //dataItem(bool isVolatile, bool isConfig, hartTypes_t type, void *data); ptr into a data struct
 

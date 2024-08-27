@@ -25,6 +25,7 @@
 #include "PV.h"
 #include "safe_lib.h"
 
+#define _PRESSUREDEVICE	1
 
 /*******  externs *******/
 extern void sv_alarm(double newValue);
@@ -1075,7 +1076,7 @@ rtData::rtData()
 
 	if ((rtn = sem_init(&RTdataSema, 0, 1)) == -1)
 	{
-		throw(EXCP_NO_SEMAPHORE);
+		// throw(EXCP_NO_SEMAPHORE);
 	}
 	rtFlow = rtCurrent = rtTotalizer=rtPercentRng = 0.0;
 	float zero = 17536.0,

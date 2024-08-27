@@ -279,7 +279,7 @@ errVal_t serializationFile::putData(void)
 	}
 	else
 	{
-		throw( "File system is lost");// should kill the app
+		// throw( "File system is lost");// should kill the app
 	}
 	writeNeeded = false;
 	return R;

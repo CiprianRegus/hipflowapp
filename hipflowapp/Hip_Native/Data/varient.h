@@ -33,12 +33,12 @@ using namespace std;
 
 #ifndef LINUX
 #define  INT_LL    __int64
-#include "ddbGeneral.h"
-#include "char.h"
-#include "ddbdefs.h"
-#include "logging.h"
-#include "ddbStrings.h"
-#include "QA+Debug.h"
+// #include "ddbGeneral.h"
+// #include "char.h"
+// #include "ddbdefs.h"
+// #include "logging.h"
+// #include "ddbStrings.h"
+// #include "QA+Debug.h"
 #else
 #define  INT_LL  long long
 #endif // LINUX

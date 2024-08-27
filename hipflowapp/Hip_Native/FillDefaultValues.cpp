@@ -28,7 +28,9 @@
 #include <stdio.h>
 #include <time.h>
 #include "nativeapp.h" // included to reuse get mac address function
-#include "factory_reset.h"
+
+// Even better if it would exist
+// #include "factory_reset.h"
 
 extern  uint8_t *pack(uint8_t *dest, const uint8_t *source, int nChar);// in database.cpp
 
@@ -63,7 +65,7 @@ errVal_t FillDefaultValues()
 	uint8_t wrtPrtCd = 0;
 
 	// #135
-	wrtPrtCd = writeProtectSet();
+	// wrtPrtCd = writeProtectSet();
 
 	/************************* Default Values ******************************/
 
@@ -106,7 +108,7 @@ errVal_t FillDefaultValues()
 	memset(&(NONvolatileData.finalAssembly[0]), 0x00, 3);// dflt 00
 
 	uint8_t buffer[64]; // plenty big
-	strcpy_s((char*)(NONvolatileData.tag), sizeof(NONvolatileData.tag), (char*)pack(&(buffer[0]), (uint8_t*)INIT_TAG, (int)TAG_LEN) /*, 6*/);     // dflt ff
+	strcpy_s((char*)(NONvolatileData.tag), sizeof(NONvolatileData.tag), (char*)pack(&(buffer[0]), (uint8_t*)INIT_TAG, 6) /*, 6*/);     // dflt ff
 	retval = NativeApp::getLowMAC(macAddress, getFullAddress);
 	if (retval == NO_ERROR)
 	{

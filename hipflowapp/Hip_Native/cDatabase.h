@@ -114,8 +114,8 @@ public:
 		isHasValue   = false;
 		isChanged_pri= false;
 		isChanged_sec= false;
-		if ( data == NULL )
-			throw "DataItem failed";
+		// if ( data == NULL )
+		// 	throw "DataItem failed";
 	};
 
 	~dataItem(){};// pRaw doesn't belong to us, nothing to do here

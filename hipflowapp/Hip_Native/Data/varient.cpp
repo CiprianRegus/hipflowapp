@@ -48,8 +48,8 @@ bool AlmostEqual2sComplement(double A, double B, int maxUlps)
 
 	// default NAN won't compare as equal to anything.
 
-	if (!(maxUlps > 0 && maxUlps < 4 * 1024))// make sure we are sane
-		throw 5;
+	// if (!(maxUlps > 0 && maxUlps < 4 * 1024))// make sure we are sane
+	// 	throw 5;
 
 	long long aInt = *(long long*)&A;	// float to int (see bit pattern above)
 
@@ -1275,403 +1275,403 @@ bool CValueVarient::operator==(const CValueVarient& src)
 struct INTEGER_RANK{ int rank; bool is_unsigned; };
 
 /* promotes the two types according to C rules, returns type of result */
-CValueVarient::valueType_t CValueVarient::promote(  CVV& inOne, CVV& outOne, const CVV& inTwo, CVV& outTwo)
-{
-	valueType_t  retType = invalid;
-	CVV          local;
+// CValueVarient::valueType_t CValueVarient::promote(  CVV& inOne, CVV& outOne, const CVV& inTwo, CVV& outTwo)
+// {
+// 	valueType_t  retType = invalid;
+// 	CVV          local;
 
-	outOne.clear(); outOne = inOne;
-	outTwo.clear(); outTwo = inTwo;
+// 	outOne.clear(); outOne = inOne;
+// 	outTwo.clear(); outTwo = inTwo;
 
-	// they both have to be numeric to be here
-	if ( (! inOne.isNumeric()) || (! ((CVV)inTwo).isNumeric()) )
-	{	
-		return retType; // an error 
-	}
+// 	// they both have to be numeric to be here
+// 	if ( (! inOne.isNumeric()) || (! ((CVV)inTwo).isNumeric()) )
+// 	{	
+// 		return retType; // an error 
+// 	}
 
-	INTEGER_RANK oneRank, twoRank;
-	INTEGER_RANK oneCnvt={0,false},twoCnvt= {0,false};
+// 	INTEGER_RANK oneRank, twoRank;
+// 	INTEGER_RANK oneCnvt={0,false},twoCnvt= {0,false};
 	
-/*	First, if the corresponding real type of either operand is long double, the other
-operand is converted, without change of type domain, to a type whose
-corresponding real type is long double.   */
-	/*
-	--- We don't support long double at this time 
-	*/ 
-/*  Otherwise, if the corresponding real type of either operand is double, the other
-operand is converted, to a double. */
-	if ( (outOne.vType == isFloatConst &&  outOne.vIsDouble) && 
-		 (outTwo.vType != isFloatConst || !outTwo.vIsDouble)   )
-	{	
-		local.clear();  
-		local = (double)outTwo;  
-		outTwo.clear(); 
-		outTwo = local;
-		retType = isFloatConst;
-	}
-	else 
-	if ( (outOne.vType != isFloatConst || !outOne.vIsDouble) && 
-		 (outTwo.vType == isFloatConst &&  outTwo.vIsDouble)    )
-	{	
-		local.clear(); 
-		local = (double)outOne;  
-		outOne.clear(); 
-		outOne = local;
-		retType = isFloatConst;
-	}
-	else 
-	if ( (outOne.vType == isFloatConst &&  outOne.vIsDouble) && 
-		 (outTwo.vType == isFloatConst &&  outTwo.vIsDouble)   )
-	{	
-		local.clear(); 
-		local = (double)outOne;  
-		outOne.clear(); 
-		outOne = local;
-		local.clear(); 
-		local = (double)outTwo;  
-		outTwo.clear(); 
-		outTwo = local;
-		retType = isFloatConst;
-	}
+// /*	First, if the corresponding real type of either operand is long double, the other
+// operand is converted, without change of type domain, to a type whose
+// corresponding real type is long double.   */
+// 	/*
+// 	--- We don't support long double at this time 
+// 	*/ 
+// /*  Otherwise, if the corresponding real type of either operand is double, the other
+// operand is converted, to a double. */
+// 	if ( (outOne.vType == isFloatConst &&  outOne.vIsDouble) && 
+// 		 (outTwo.vType != isFloatConst || !outTwo.vIsDouble)   )
+// 	{	
+// 		local.clear();  
+// 		local = (double)outTwo;  
+// 		outTwo.clear(); 
+// 		outTwo = local;
+// 		retType = isFloatConst;
+// 	}
+// 	else 
+// 	if ( (outOne.vType != isFloatConst || !outOne.vIsDouble) && 
+// 		 (outTwo.vType == isFloatConst &&  outTwo.vIsDouble)    )
+// 	{	
+// 		local.clear(); 
+// 		local = (double)outOne;  
+// 		outOne.clear(); 
+// 		outOne = local;
+// 		retType = isFloatConst;
+// 	}
+// 	else 
+// 	if ( (outOne.vType == isFloatConst &&  outOne.vIsDouble) && 
+// 		 (outTwo.vType == isFloatConst &&  outTwo.vIsDouble)   )
+// 	{	
+// 		local.clear(); 
+// 		local = (double)outOne;  
+// 		outOne.clear(); 
+// 		outOne = local;
+// 		local.clear(); 
+// 		local = (double)outTwo;  
+// 		outTwo.clear(); 
+// 		outTwo = local;
+// 		retType = isFloatConst;
+// 	}
 
-/*  Otherwise, if the corresponding real type of either operand is float, the other
-operand is converted to a float.  */
-	else 
-	if ( (outOne.vType == isFloatConst && !outOne.vIsDouble) && 
-		 (outTwo.vType != isFloatConst ||  outTwo.vIsDouble)   )
-	{	local.clear(); local = (float)outTwo;  outTwo.clear(); outTwo = local;
-		retType = isFloatConst;
-	}
-	else 
-	if ( (outOne.vType != isFloatConst ||  outOne.vIsDouble) && 
-		 (outTwo.vType == isFloatConst && !outTwo.vIsDouble)   )
-	{	local.clear(); local = (float)outOne;  outOne.clear(); outOne = local;
-		retType = isFloatConst;
-	}
-	else 
-	if ( (outOne.vType == isFloatConst && !outOne.vIsDouble) && 
-		 (outTwo.vType == isFloatConst && !outTwo.vIsDouble)   )
-	{	local.clear(); local = outOne;  outOne.clear(); outOne = local;
-		local.clear(); local = outTwo;  outTwo.clear(); outTwo = local;
-		retType = isFloatConst;
-	}
-	// else: neither is double nor float so fall thru to int handling
+// /*  Otherwise, if the corresponding real type of either operand is float, the other
+// operand is converted to a float.  */
+// 	else 
+// 	if ( (outOne.vType == isFloatConst && !outOne.vIsDouble) && 
+// 		 (outTwo.vType != isFloatConst ||  outTwo.vIsDouble)   )
+// 	{	local.clear(); local = (float)outTwo;  outTwo.clear(); outTwo = local;
+// 		retType = isFloatConst;
+// 	}
+// 	else 
+// 	if ( (outOne.vType != isFloatConst ||  outOne.vIsDouble) && 
+// 		 (outTwo.vType == isFloatConst && !outTwo.vIsDouble)   )
+// 	{	local.clear(); local = (float)outOne;  outOne.clear(); outOne = local;
+// 		retType = isFloatConst;
+// 	}
+// 	else 
+// 	if ( (outOne.vType == isFloatConst && !outOne.vIsDouble) && 
+// 		 (outTwo.vType == isFloatConst && !outTwo.vIsDouble)   )
+// 	{	local.clear(); local = outOne;  outOne.clear(); outOne = local;
+// 		local.clear(); local = outTwo;  outTwo.clear(); outTwo = local;
+// 		retType = isFloatConst;
+// 	}
+// 	// else: neither is double nor float so fall thru to int handling
 
-/*  Otherwise, the integer promotions are performed on both operands. Then the
-following rules are applied to the promoted operands:   */
-	if ( retType == invalid ) // no float types...
-	{
-		if (outOne.vType == isBool )
-		{	
-			oneRank.is_unsigned = false; oneRank.rank = 1;
-		}
-		else 
-		if ( outOne.vType == isIntConst )
-		{
-			if ( outOne.vIsUnsigned ) 
-				oneRank.is_unsigned = true;
-			else // not unsigned => is signed
-				oneRank.is_unsigned = false;
+// /*  Otherwise, the integer promotions are performed on both operands. Then the
+// following rules are applied to the promoted operands:   */
+// 	if ( retType == invalid ) // no float types...
+// 	{
+// 		if (outOne.vType == isBool )
+// 		{	
+// 			oneRank.is_unsigned = false; oneRank.rank = 1;
+// 		}
+// 		else 
+// 		if ( outOne.vType == isIntConst )
+// 		{
+// 			if ( outOne.vIsUnsigned ) 
+// 				oneRank.is_unsigned = true;
+// 			else // not unsigned => is signed
+// 				oneRank.is_unsigned = false;
 
-			switch (outOne.vSize)
-			{
-			case 1:		// char & unsigned char
-				oneRank.rank = 2;
-				break;
-			case 2:		// short & unsigned short
-				oneRank.rank = 3;
-				break;
-			case 4:		// int & unsigned int
-				oneRank.rank = 4;
-				break;
-			default:		//0,3
-				return invalid; // error return
-				break;
-			}
-		}
-		else 
-		if ( outOne.vType == isVeryLong)
-		{
-			if ( outOne.vIsUnsigned ) 
-				oneRank.is_unsigned = true;
-			else // not unsigned => is signed
-				oneRank.is_unsigned = false;
+// 			switch (outOne.vSize)
+// 			{
+// 			case 1:		// char & unsigned char
+// 				oneRank.rank = 2;
+// 				break;
+// 			case 2:		// short & unsigned short
+// 				oneRank.rank = 3;
+// 				break;
+// 			case 4:		// int & unsigned int
+// 				oneRank.rank = 4;
+// 				break;
+// 			default:		//0,3
+// 				return invalid; // error return
+// 				break;
+// 			}
+// 		}
+// 		else 
+// 		if ( outOne.vType == isVeryLong)
+// 		{
+// 			if ( outOne.vIsUnsigned ) 
+// 				oneRank.is_unsigned = true;
+// 			else // not unsigned => is signed
+// 				oneRank.is_unsigned = false;
 
-			if (outOne.vSize == 8)
-			{
-				oneRank.rank = 5;
-			}
-			else // size 5,6,7 & > 8
-			{	return invalid; // error return
-			}
-		}
-		else
-		{	return invalid; // error return
-		}
+// 			if (outOne.vSize == 8)
+// 			{
+// 				oneRank.rank = 5;
+// 			}
+// 			else // size 5,6,7 & > 8
+// 			{	return invalid; // error return
+// 			}
+// 		}
+// 		else
+// 		{	return invalid; // error return
+// 		}
 
 		
-		if (outTwo.vType == isBool )
-		{	
-			twoRank.is_unsigned = false; twoRank.rank = 1;
-		}
-		else 
-		if ( outTwo.vType == isIntConst )
-		{
-			if ( outTwo.vIsUnsigned ) 
-				twoRank.is_unsigned = true;
-			else // not unsigned => is signed
-				twoRank.is_unsigned = false;
+// 		if (outTwo.vType == isBool )
+// 		{	
+// 			twoRank.is_unsigned = false; twoRank.rank = 1;
+// 		}
+// 		else 
+// 		if ( outTwo.vType == isIntConst )
+// 		{
+// 			if ( outTwo.vIsUnsigned ) 
+// 				twoRank.is_unsigned = true;
+// 			else // not unsigned => is signed
+// 				twoRank.is_unsigned = false;
 
-			switch (outTwo.vSize)
-			{
-			case 1:		// char & unsigned char
-				twoRank.rank = 2;
-				break;
-			case 2:		// short & unsigned short
-				twoRank.rank = 3;
-				break;
-			case 4:		// int & unsigned int
-				twoRank.rank = 4;
-				break;
-			default:		//0,3
-				return invalid; // error return
-				break;
-			}
-		}
-		else 
-		if ( outTwo.vType == isVeryLong)
-		{
-			if ( outTwo.vIsUnsigned ) 
-				twoRank.is_unsigned = true;
-			else // not unsigned => is signed
-				twoRank.is_unsigned = false;
+// 			switch (outTwo.vSize)
+// 			{
+// 			case 1:		// char & unsigned char
+// 				twoRank.rank = 2;
+// 				break;
+// 			case 2:		// short & unsigned short
+// 				twoRank.rank = 3;
+// 				break;
+// 			case 4:		// int & unsigned int
+// 				twoRank.rank = 4;
+// 				break;
+// 			default:		//0,3
+// 				return invalid; // error return
+// 				break;
+// 			}
+// 		}
+// 		else 
+// 		if ( outTwo.vType == isVeryLong)
+// 		{
+// 			if ( outTwo.vIsUnsigned ) 
+// 				twoRank.is_unsigned = true;
+// 			else // not unsigned => is signed
+// 				twoRank.is_unsigned = false;
 
-			if (outTwo.vSize == 8)
-			{
-				twoRank.rank = 5;
-			}
-			else // size 5,6,7 & > 8
-			{	return invalid; // error return
-			}
-		}
-		else
-		{	return invalid; // error return
-		}
+// 			if (outTwo.vSize == 8)
+// 			{
+// 				twoRank.rank = 5;
+// 			}
+// 			else // size 5,6,7 & > 8
+// 			{	return invalid; // error return
+// 			}
+// 		}
+// 		else
+// 		{	return invalid; // error return
+// 		}
 
-	/* If both operands have the same type, then no further conversion is needed. */
-		if ( outOne.vType       == outTwo.vType        &&  
-			 outOne.vIsUnsigned == outTwo.vIsUnsigned  &&  
-			 outOne.vIsDouble   == outTwo.vIsDouble      )
-		{	return outTwo.vType;// done
-		}
+// 	/* If both operands have the same type, then no further conversion is needed. */
+// 		if ( outOne.vType       == outTwo.vType        &&  
+// 			 outOne.vIsUnsigned == outTwo.vIsUnsigned  &&  
+// 			 outOne.vIsDouble   == outTwo.vIsDouble      )
+// 		{	return outTwo.vType;// done
+// 		}
 
-	/* Otherwise, if both operands have signed integer types or both have unsigned
-	integer types, the operand with the type of lesser integer conversion rank is
-	converted to the type of the operand with greater rank. */
-		if ( (( oneRank.is_unsigned) && ( twoRank.is_unsigned)) || 
-			 ((!oneRank.is_unsigned) && (!twoRank.is_unsigned))  )
-		{// lower to higher
-			//oneCnvt,twoCnvt;
-			if (oneRank.rank > twoRank.rank)
-			{
-				twoCnvt = oneRank;// other stays empty
-			}
-			else
-			{
-				oneCnvt = twoRank;// other stays empty
-			}
-		}
-		else // one is signed, the other is unsigned
-	/* Otherwise, if the operand that has unsigned integer type has rank greater or
-	equal to the rank of the type of the other operand, then the operand with
-	signed integer type is converted to the type of the operand with unsigned
-	integer type.*/
-		if ( oneRank.is_unsigned && oneRank.rank >= twoRank.rank )
-		{// two converted to one's type
-			twoCnvt = oneRank;// other stays empty
-		}
-		else
-		if ( twoRank.is_unsigned && twoRank.rank >= oneRank.rank )
-		{// one converted to two's type
-			oneCnvt = twoRank;// other stays empty
-		}
-		else
-	/* Otherwise, if the type of the operand with signed integer type can represent
-	all of the values of the type of the operand with unsigned integer type, then
-	the operand with unsigned integer type is converted to the type of the
-	operand with signed integer type.  */
-		if ( (!oneRank.is_unsigned) && oneRank.rank > twoRank.rank)
-		{//two converted to one's type
-			twoCnvt = oneRank;// other stays empty
-		}
-		else
-		if ( (!twoRank.is_unsigned) && twoRank.rank > oneRank.rank )
-		{// one converted to two's type
-			oneCnvt = twoRank;// other stays empty
-		}
-		else
-	/* Otherwise, both operands are converted to the unsigned integer type
-	corresponding to the type of the operand with signed integer type.	*/
-		if ( oneRank.is_unsigned )// two is SIGNED
-		{//both to twoRank.rank and unsigned
-			twoCnvt = oneCnvt   = twoRank;// other stays empty
-			twoCnvt.is_unsigned = true;
-			oneCnvt.is_unsigned = true;
-		}
-		else // one is SIGNED
-		{//both to oneRank.rank and unsigned
-			twoCnvt = oneCnvt   = oneRank;// other stays empty
-			twoCnvt.is_unsigned = true;
-			oneCnvt.is_unsigned = true;
-		}
+// 	/* Otherwise, if both operands have signed integer types or both have unsigned
+// 	integer types, the operand with the type of lesser integer conversion rank is
+// 	converted to the type of the operand with greater rank. */
+// 		if ( (( oneRank.is_unsigned) && ( twoRank.is_unsigned)) || 
+// 			 ((!oneRank.is_unsigned) && (!twoRank.is_unsigned))  )
+// 		{// lower to higher
+// 			//oneCnvt,twoCnvt;
+// 			if (oneRank.rank > twoRank.rank)
+// 			{
+// 				twoCnvt = oneRank;// other stays empty
+// 			}
+// 			else
+// 			{
+// 				oneCnvt = twoRank;// other stays empty
+// 			}
+// 		}
+// 		else // one is signed, the other is unsigned
+// 	/* Otherwise, if the operand that has unsigned integer type has rank greater or
+// 	equal to the rank of the type of the other operand, then the operand with
+// 	signed integer type is converted to the type of the operand with unsigned
+// 	integer type.*/
+// 		if ( oneRank.is_unsigned && oneRank.rank >= twoRank.rank )
+// 		{// two converted to one's type
+// 			twoCnvt = oneRank;// other stays empty
+// 		}
+// 		else
+// 		if ( twoRank.is_unsigned && twoRank.rank >= oneRank.rank )
+// 		{// one converted to two's type
+// 			oneCnvt = twoRank;// other stays empty
+// 		}
+// 		else
+// 	/* Otherwise, if the type of the operand with signed integer type can represent
+// 	all of the values of the type of the operand with unsigned integer type, then
+// 	the operand with unsigned integer type is converted to the type of the
+// 	operand with signed integer type.  */
+// 		if ( (!oneRank.is_unsigned) && oneRank.rank > twoRank.rank)
+// 		{//two converted to one's type
+// 			twoCnvt = oneRank;// other stays empty
+// 		}
+// 		else
+// 		if ( (!twoRank.is_unsigned) && twoRank.rank > oneRank.rank )
+// 		{// one converted to two's type
+// 			oneCnvt = twoRank;// other stays empty
+// 		}
+// 		else
+// 	/* Otherwise, both operands are converted to the unsigned integer type
+// 	corresponding to the type of the operand with signed integer type.	*/
+// 		if ( oneRank.is_unsigned )// two is SIGNED
+// 		{//both to twoRank.rank and unsigned
+// 			twoCnvt = oneCnvt   = twoRank;// other stays empty
+// 			twoCnvt.is_unsigned = true;
+// 			oneCnvt.is_unsigned = true;
+// 		}
+// 		else // one is SIGNED
+// 		{//both to oneRank.rank and unsigned
+// 			twoCnvt = oneCnvt   = oneRank;// other stays empty
+// 			twoCnvt.is_unsigned = true;
+// 			oneCnvt.is_unsigned = true;
+// 		}
 
-		// do the conversion(s)
-		if (oneCnvt.rank > 0 )
-		{// convert oneOut to oneCnvt type
-			switch (oneCnvt.rank)
-			{
-			case 1:	// bool
-				{	local.clear();  local  = (bool)outOne;  
-					outOne.clear(); outOne = local;
-					retType = isBool;
-				}
-				break;
-			case 2:	// char
-				{
-					if (oneCnvt.is_unsigned)
-					{	local.clear();  local = (unsigned char)outOne;  
-						outOne.clear(); outOne = local;
-						retType = isIntConst;//RUL_UNSIGNED_CHAR;
-					}
-					else//signed
-					{	local.clear();  local = (char)outOne;  
-						outOne.clear(); outOne = local;
-						retType = isIntConst;//RUL_CHAR;
-					}
-				}
-				break;
-			case 3:	// short
-				{
-					if (oneCnvt.is_unsigned)
-					{	local.clear();  local = (unsigned short)outOne;  
-						outOne.clear(); outOne = local;
-						retType = isIntConst;//RUL_USHORT;
-					}
-					else//signed
-					{	local.clear();  local = (short)outOne;  
-						outOne.clear(); outOne = local;
-						retType = isIntConst;//RUL_SHORT;
-					}
-				}
-				break;
-			case 4:	// int
-				{
-					if (oneCnvt.is_unsigned)
-					{	local.clear();  local = (unsigned int)outOne;  
-						outOne.clear(); outOne = local;
-						retType = isIntConst;//RUL_UINT;
-					}
-					else//signed
-					{	local.clear();  local = (int)outOne;  
-						outOne.clear(); outOne = local;
-						retType = isIntConst;//RUL_INT;
-					}
-				}
-				break;
-			case 5:	// long long
-				{
-					if (oneCnvt.is_unsigned)
-					{	local.clear();  local = (UINT64)outOne;  
-						outOne.clear(); outOne = local;
-						retType = isVeryLong;//RUL_ULONGLONG;
-					}
-					else//signed
-					{	local.clear();  local = (INT64)outOne;  
-						outOne.clear(); outOne = local;
-						retType = isVeryLong;//RUL_LONGLONG;
-					}
-				}
-				break;
-			default:
-				outOne.clear();// error
-				retType = invalid;//RUL_NULL;
-				break;
-			}// endswitch
-		}// else no conversion on one
+// 		// do the conversion(s)
+// 		if (oneCnvt.rank > 0 )
+// 		{// convert oneOut to oneCnvt type
+// 			switch (oneCnvt.rank)
+// 			{
+// 			case 1:	// bool
+// 				{	local.clear();  local  = (bool)outOne;  
+// 					outOne.clear(); outOne = local;
+// 					retType = isBool;
+// 				}
+// 				break;
+// 			case 2:	// char
+// 				{
+// 					if (oneCnvt.is_unsigned)
+// 					{	local.clear();  local = (unsigned char)outOne;  
+// 						outOne.clear(); outOne = local;
+// 						retType = isIntConst;//RUL_UNSIGNED_CHAR;
+// 					}
+// 					else//signed
+// 					{	local.clear();  local = (char)outOne;  
+// 						outOne.clear(); outOne = local;
+// 						retType = isIntConst;//RUL_CHAR;
+// 					}
+// 				}
+// 				break;
+// 			case 3:	// short
+// 				{
+// 					if (oneCnvt.is_unsigned)
+// 					{	local.clear();  local = (unsigned short)outOne;  
+// 						outOne.clear(); outOne = local;
+// 						retType = isIntConst;//RUL_USHORT;
+// 					}
+// 					else//signed
+// 					{	local.clear();  local = (short)outOne;  
+// 						outOne.clear(); outOne = local;
+// 						retType = isIntConst;//RUL_SHORT;
+// 					}
+// 				}
+// 				break;
+// 			case 4:	// int
+// 				{
+// 					if (oneCnvt.is_unsigned)
+// 					{	local.clear();  local = (unsigned int)outOne;  
+// 						outOne.clear(); outOne = local;
+// 						retType = isIntConst;//RUL_UINT;
+// 					}
+// 					else//signed
+// 					{	local.clear();  local = (int)outOne;  
+// 						outOne.clear(); outOne = local;
+// 						retType = isIntConst;//RUL_INT;
+// 					}
+// 				}
+// 				break;
+// 			case 5:	// long long
+// 				{
+// 					if (oneCnvt.is_unsigned)
+// 					{	local.clear();  local = (UINT64)outOne;  
+// 						outOne.clear(); outOne = local;
+// 						retType = isVeryLong;//RUL_ULONGLONG;
+// 					}
+// 					else//signed
+// 					{	local.clear();  local = (INT64)outOne;  
+// 						outOne.clear(); outOne = local;
+// 						retType = isVeryLong;//RUL_LONGLONG;
+// 					}
+// 				}
+// 				break;
+// 			default:
+// 				outOne.clear();// error
+// 				retType = invalid;//RUL_NULL;
+// 				break;
+// 			}// endswitch
+// 		}// else no conversion on one
 
-		if (twoCnvt.rank > 0 )
-		{// convert twoOut to twoCnvt type
-			switch (twoCnvt.rank)
-			{
-			case 1:	// bool
-				{	local.clear();   local = (bool)outTwo;  
-					outTwo.clear(); outTwo = local;
-					retType = isBool;//RUL_BOOL;
-				}
-				break;
-			case 2:	// char
-				{
-					if (twoCnvt.is_unsigned)
-					{	local.clear();  local = (unsigned char)outTwo;  
-						outTwo.clear(); outTwo = local;
-						retType = isIntConst;//RUL_UNSIGNED_CHAR;
-					}
-					else//signed
-					{	local.clear();  local = (char)outTwo;  
-						outTwo.clear(); outTwo = local;
-						retType = isIntConst;//RUL_CHAR;
-					}
-				}
-				break;
-			case 3:	// short
-				{
-					if (twoCnvt.is_unsigned)
-					{	local.clear();  local = (unsigned short)outTwo;  
-						outTwo.clear(); outTwo = local;
-						retType = isIntConst;//RUL_USHORT;
-					}
-					else//signed
-					{	local.clear();  local = (short)outTwo;  
-						outTwo.clear(); outTwo = local;
-						retType = isIntConst;//RUL_SHORT;
-					}
-				}
-				break;
-			case 4:	// int
-				{
-					if (twoCnvt.is_unsigned)
-					{	local.clear();  local = (unsigned int)outTwo;  
-						outTwo.clear(); outTwo = local;
-						retType = isIntConst;//RUL_UINT;
-					}
-					else//signed
-					{	local.clear();  local = (int)outTwo;  
-						outTwo.clear(); outTwo = local;
-						retType = isIntConst;//RUL_INT;
-					}
-				}
-				break;
-			case 5:	// long long
-				{
-					if (twoCnvt.is_unsigned)
-					{	local.clear();  local = (UINT64)outTwo;  
-						outTwo.clear(); outTwo = local;
-						retType = isVeryLong;//RUL_ULONGLONG;
-					}
-					else//signed
-					{	local.clear();  local = (INT64)outTwo;  
-						outTwo.clear(); outTwo = local;
-						retType = isVeryLong;//RUL_LONGLONG;
-					}
-				}
-				break;
-			default:
-				outTwo.clear();// error
-				retType = invalid;//RUL_NULL;
-				break;
-			}// endswitch
-		}// else no conversion on two
+// 		if (twoCnvt.rank > 0 )
+// 		{// convert twoOut to twoCnvt type
+// 			switch (twoCnvt.rank)
+// 			{
+// 			case 1:	// bool
+// 				{	local.clear();   local = (bool)outTwo;  
+// 					outTwo.clear(); outTwo = local;
+// 					retType = isBool;//RUL_BOOL;
+// 				}
+// 				break;
+// 			case 2:	// char
+// 				{
+// 					if (twoCnvt.is_unsigned)
+// 					{	local.clear();  local = (unsigned char)outTwo;  
+// 						outTwo.clear(); outTwo = local;
+// 						retType = isIntConst;//RUL_UNSIGNED_CHAR;
+// 					}
+// 					else//signed
+// 					{	local.clear();  local = (char)outTwo;  
+// 						outTwo.clear(); outTwo = local;
+// 						retType = isIntConst;//RUL_CHAR;
+// 					}
+// 				}
+// 				break;
+// 			case 3:	// short
+// 				{
+// 					if (twoCnvt.is_unsigned)
+// 					{	local.clear();  local = (unsigned short)outTwo;  
+// 						outTwo.clear(); outTwo = local;
+// 						retType = isIntConst;//RUL_USHORT;
+// 					}
+// 					else//signed
+// 					{	local.clear();  local = (short)outTwo;  
+// 						outTwo.clear(); outTwo = local;
+// 						retType = isIntConst;//RUL_SHORT;
+// 					}
+// 				}
+// 				break;
+// 			case 4:	// int
+// 				{
+// 					if (twoCnvt.is_unsigned)
+// 					{	local.clear();  local = (unsigned int)outTwo;  
+// 						outTwo.clear(); outTwo = local;
+// 						retType = isIntConst;//RUL_UINT;
+// 					}
+// 					else//signed
+// 					{	local.clear();  local = (int)outTwo;  
+// 						outTwo.clear(); outTwo = local;
+// 						retType = isIntConst;//RUL_INT;
+// 					}
+// 				}
+// 				break;
+// 			case 5:	// long long
+// 				{
+// 					if (twoCnvt.is_unsigned)
+// 					{	local.clear();  local = (UINT64)outTwo;  
+// 						outTwo.clear(); outTwo = local;
+// 						retType = isVeryLong;//RUL_ULONGLONG;
+// 					}
+// 					else//signed
+// 					{	local.clear();  local = (INT64)outTwo;  
+// 						outTwo.clear(); outTwo = local;
+// 						retType = isVeryLong;//RUL_LONGLONG;
+// 					}
+// 				}
+// 				break;
+// 			default:
+// 				outTwo.clear();// error
+// 				retType = invalid;//RUL_NULL;
+// 				break;
+// 			}// endswitch
+// 		}// else no conversion on two
 
-	}//else let the float types stay
-	return retType;
-}// end of promote
+// 	}//else let the float types stay
+// 	return retType;
+// }// end of promote
