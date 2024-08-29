@@ -49,7 +49,7 @@ int cmd_base::handleCmd(AppPdu *pPDU)
 	//if (! fromPrimary)
 	//	printf("        Secondary cmd Rcv'd. Cmd %d\n", pPDU->CmdNum());
 
-	// pPDU->msg2Ack(TPDELIM_FRAME_STX, isBursting());  // convert to reply pkt for all commands
+	pPDU->msg2Ack();  // convert to reply pkt for all commands
 	cmdNum = (cmdNum <= 255) ? pPDU->CmdNum() : cmdNum; // #39
 	// if(pPDU->CmdNum1Byte() == HART_CMD_EXP_FLAG && pPDU->ByteCount() < 2)
 	// {
