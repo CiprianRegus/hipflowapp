@@ -181,6 +181,8 @@ int NativeApp::handleMessage(AppPdu *pPDU)
 	//	This is not even defined anywhere... Good thing that is compiles
 	// 	pPDU->setReqByteCount(pPDU->ByteCount());
 	// }
+	/* Workaround until this functionality is implemented */
+	r = FOR_US;
 	if (pPDU->IsSTX()) pAppConnector->incStx();
 	do
 	{	// see line 174 in burst.cpp for cmd 120 handling info
