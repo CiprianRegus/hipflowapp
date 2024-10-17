@@ -21,14 +21,14 @@
 
 /* defining the status word to be carried along with a message
  */
-typedef enum { SUCCESS=0, 
-    NO_MSG,            /* no message i.e. never saw the SOM */
-    ADDR_ERR,        /* error receiving the address */
-    EXP_ERR,        /* error while getting the expansion bytes */
-    BC_ERR,            /* error receiving the byte count */
-    PE, FE, OE,        /* UART error (command or data fields only */
-    BCCE,            /* bad BCC */
-    GAP_ERR            /* this one is left as an exercise for the student */ 
+typedef enum { MSG_STAT_SUCCESS=0,
+    MSG_STAT_NO_MSG,            /* no message i.e. never saw the SOM */
+    MSG_STAT_ADDR_ERR,        /* error receiving the address */
+    MSG_STAT_EXP_ERR,        /* error while getting the expansion bytes */
+    MSG_STAT_BC_ERR,            /* error receiving the byte count */
+    MSG_STAT_PE, FE, OE,        /* UART error (command or data fields only */
+    MSG_STAT_BCCE,            /* bad BCC */
+    MSG_STAT_GAP_ERR            /* this one is left as an exercise for the student */
 } MSG_STAT;
 
 /* used to index the virtual function pointers for accessing header data */
