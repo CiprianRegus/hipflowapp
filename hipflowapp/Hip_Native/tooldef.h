@@ -45,6 +45,12 @@
 
  #define TOOL_VERS      "1.1"
 
+#ifndef TRUE
+#define TRUE    1
+#endif
+#ifndef FALSE
+#define FALSE   0
+#endif
  
 #endif /* _TOOLDEF_H */
 
